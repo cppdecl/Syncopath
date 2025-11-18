@@ -21,7 +21,7 @@ export default function MainMenu() {
 
   const [hovered, setHovered] = useState(null);
 
-  const buttonLabels = ["Play", "Beatmaps", "Options", "Quit"];
+  const buttonLabels = ["Play", "Quit"];
   const [visibleButtons, setVisibleButtons] = useState(
     Array(buttonLabels.length).fill(false)
   );
@@ -39,6 +39,7 @@ export default function MainMenu() {
     exitAudio.play();
     closeMenu();
 
+    // Fade out theme audio
     if (audioRef.current) {
       const audio = audioRef.current;
       let volume = audio.volume;
@@ -73,6 +74,8 @@ export default function MainMenu() {
   const handleMenuClick = (label) => {
     if (label === "Quit") {
       handleQuit();
+    } else if (label === "Play") {
+      navigate("/play");
     }
   };
 
