@@ -6,15 +6,55 @@ export default function MainMenu() {
   const audioRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const minScale = 0.8;
-  const threshold = 0.68;
+  const minScale = 1.6;
+  const threshold = 0.58;
   const smoothing = 0.3;
   const sensitivity = 0.7;
   const maxScale = 2.0;
 
   const [scale, setScale] = useState(1);
   const [started, setStarted] = useState(false);
+
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [rawMouse, setRawMouse] = useState({ x: 0, y: 0 });
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const [hovered, setHovered] = useState(null);
+
+  const buttonLabels = ["Play", "Beatmaps", "Options", "Quit"];
+  const [visibleButtons, setVisibleButtons] = useState(
+    Array(buttonLabels.length).fill(false)
+  );
+
+  const openMenu = () => {
+    setMenuOpen(true);
+    buttonLabels.forEach((_, i) => {
+      setTimeout(() => {
+        setVisibleButtons((prev) => {
+          const copy = [...prev];
+          copy[i] = true;
+          return copy;
+        });
+      }, i * 150);
+    });
+  };
+
+  const closeMenu = () => {
+    buttonLabels
+      .slice()
+      .reverse()
+      .forEach((_, i) => {
+        setTimeout(() => {
+          setVisibleButtons((prev) => {
+            const copy = [...prev];
+            copy[buttonLabels.length - 1 - i] = false;
+            return copy;
+          });
+        }, i * 100);
+      });
+    setTimeout(() => setMenuOpen(false), buttonLabels.length * 100);
+  };
 
   const snowConfig = {
     amount: 150,
@@ -28,6 +68,19 @@ export default function MainMenu() {
   };
 
   useEffect(() => {
+    function handleKey(e) {
+      if (e.key === "Escape") {
+        if (menuOpen) {
+          closeMenu();
+        } else {
+        }
+      }
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
+
+  useEffect(() => {
     function handleMouseMove(e) {
       const cx = window.innerWidth / 2;
       const cy = window.innerHeight / 2;
@@ -36,7 +89,7 @@ export default function MainMenu() {
       const dy = (cy - e.clientY) / cy;
       const strength = 30;
 
-      setOffset({
+      setRawMouse({
         x: dx * strength,
         y: dy * strength,
       });
@@ -45,6 +98,10 @@ export default function MainMenu() {
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
+
+  useEffect(() => {
+    setOffset(rawMouse);
+  }, [rawMouse]);
 
   useEffect(() => {
     if (!started) return;
@@ -108,7 +165,6 @@ export default function MainMenu() {
     let height = (canvas.height = window.innerHeight);
 
     const particles = [];
-
     const snowDelay = 1000;
 
     const createParticles = () => {
@@ -151,7 +207,7 @@ export default function MainMenu() {
         p.y += p.dy + snowConfig.gravity;
 
         if (p.y > height) {
-          p.y = -p.r; // restart at top
+          p.y = -p.r;
           p.x = Math.random() * width;
         }
 
@@ -197,14 +253,14 @@ export default function MainMenu() {
             background: "#100e1bff",
             color: "white",
             fontSize: "3rem",
-            zIndex: 10,
+            zIndex: 10000,
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
           }}
         >
           Click to Play
         </div>
       )}
 
-      {/* Snow canvas */}
       <canvas
         ref={canvasRef}
         style={{
@@ -218,18 +274,19 @@ export default function MainMenu() {
         }}
       />
 
-      {/* VIEWPORT / MOVING LAYER */}
       <div
         style={{
-          transform: `translate(${offset.x}px, ${offset.y}px)`,
-          transition: "transform 0.1s ease-out",
+          position: "absolute",
+          transform: `translate(${offset.x + (menuOpen ? 8 * 10 : 220)}px, ${
+            offset.y
+          }px)`,
+          transition: "transform 0.3s ease-out",
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
-          zIndex: 1,
+          gap: "3rem",
+          zIndex: 10,
         }}
       >
-        {/* OUTER WHITE CIRCLE */}
         <div
           style={{
             width: "35vh",
@@ -239,14 +296,14 @@ export default function MainMenu() {
             transform: `scale(${scale})`,
             transition: "transform 0.05s linear",
             willChange: "transform",
-            zIndex: 1,
+            zIndex: 10,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          {/* INNER PURPLE CIRCLE */}
           <div
+            onClick={() => (menuOpen ? closeMenu() : openMenu())}
             style={{
               width: "90%",
               height: "90%",
@@ -255,6 +312,7 @@ export default function MainMenu() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              cursor: "pointer",
             }}
           >
             <h1
@@ -271,6 +329,48 @@ export default function MainMenu() {
               Syncopath
             </h1>
           </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.5rem",
+            zIndex: 1,
+          }}
+        >
+          {buttonLabels.map((label, i) => (
+            <div
+              key={label}
+              onMouseEnter={() => setHovered(label)}
+              onMouseLeave={() => setHovered(null)}
+              style={{
+                background: hovered === label ? "#df1264ff" : "#e64784ff",
+                color: hovered === label ? "white" : "#ffabcbff",
+                padding: hovered === label ? "1.1rem 2.5rem" : "0.9rem 1.5rem",
+                fontSize: "2rem",
+                fontWeight: "bold",
+                borderRadius: "12px",
+                textAlign: "center",
+                cursor: "pointer",
+                userSelect: "none",
+                width: "20rem",
+                margin: "-10px",
+                border:
+                  hovered === label ? "4px solid white" : "4px solid #ffffffff",
+                fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+
+                transform: visibleButtons[i]
+                  ? "translateX(0)"
+                  : "translateX(-100px)",
+                opacity: visibleButtons[i] ? 1 : 0,
+                transition:
+                  "transform 0.5s ease, opacity 0.5s ease, background 0.3s, color 0.3s, border 0.3s, padding 0.3s",
+              }}
+            >
+              {label}
+            </div>
+          ))}
         </div>
       </div>
 
