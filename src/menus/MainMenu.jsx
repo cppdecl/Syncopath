@@ -21,7 +21,7 @@ export default function MainMenu() {
       const cx = window.innerWidth / 2;
       const cy = window.innerHeight / 2;
 
-      const dx = (cx - e.clientX) / cx; // inverse movement
+      const dx = (cx - e.clientX) / cx;
       const dy = (cy - e.clientY) / cy;
 
       const strength = 30;
@@ -95,7 +95,7 @@ export default function MainMenu() {
         height: "100vh",
         position: "relative",
         overflow: "hidden",
-        background: "#100e1bff", // super dark purple
+        background: "#100e1bff",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -156,7 +156,7 @@ export default function MainMenu() {
               width: "90%",
               height: "90%",
               borderRadius: "50%",
-              background: "#c72e69ff", // purple
+              background: "#c72e69ff",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
