@@ -17,7 +17,6 @@ export default function MainMenu() {
 
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [rawMouse, setRawMouse] = useState({ x: 0, y: 0 });
-
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [hovered, setHovered] = useState(null);
@@ -26,6 +25,56 @@ export default function MainMenu() {
   const [visibleButtons, setVisibleButtons] = useState(
     Array(buttonLabels.length).fill(false)
   );
+
+  const [quitting, setQuitting] = useState(false);
+  const [fadeOutDiv, setFadeOutDiv] = useState(false);
+  const [fadeOpacity, setFadeOpacity] = useState(0);
+
+  const handleQuit = () => {
+    if (!audioRef.current) return;
+    setQuitting(true);
+
+    const exitAudio = new Audio("/Exit.mp3");
+    exitAudio.volume = 1;
+    exitAudio.play();
+    closeMenu();
+
+    if (audioRef.current) {
+      const audio = audioRef.current;
+      let volume = audio.volume;
+      const fadeInterval = setInterval(() => {
+        volume -= 0.08;
+        if (volume <= 0) {
+          volume = 0;
+          clearInterval(fadeInterval);
+          audio.pause();
+          audio.currentTime = 0;
+        }
+        audio.volume = volume;
+      }, 50);
+    }
+
+    exitAudio.addEventListener("ended", () => {
+      setFadeOutDiv(true);
+      setTimeout(() => setFadeOpacity(1), 50);
+
+      setTimeout(() => {
+        setStarted(false);
+        setMenuOpen(false);
+        setVisibleButtons(Array(buttonLabels.length).fill(false));
+        setHovered(null);
+        setQuitting(false);
+        setFadeOpacity(0);
+        setFadeOutDiv(false);
+      }, 2000);
+    });
+  };
+
+  const handleMenuClick = (label) => {
+    if (label === "Quit") {
+      handleQuit();
+    }
+  };
 
   const openMenu = () => {
     setMenuOpen(true);
@@ -273,6 +322,22 @@ export default function MainMenu() {
           zIndex: 5,
         }}
       />
+      {fadeOutDiv && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "#100e1bff",
+            opacity: fadeOpacity,
+            transition: "opacity 2s ease",
+            zIndex: 100000,
+            pointerEvents: "none",
+          }}
+        />
+      )}
 
       <div
         style={{
@@ -342,6 +407,9 @@ export default function MainMenu() {
           {buttonLabels.map((label, i) => (
             <div
               key={label}
+              onClick={() => {
+                handleMenuClick(label);
+              }}
               onMouseEnter={() => setHovered(label)}
               onMouseLeave={() => setHovered(null)}
               style={{
