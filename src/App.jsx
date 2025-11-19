@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { apiGet } from "./menus/Client.jsx";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
