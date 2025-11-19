@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { apiPost } from "../api/Client.js";
 import { Link, useNavigate } from "react-router-dom";
+import { apiPost } from "./Client.jsx";
 
 export default function LoginMenu() {
   const nav = useNavigate();

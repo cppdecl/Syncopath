@@ -14,8 +14,7 @@ import LoginMenu from "./menus/LoginMenu.jsx";
 import RegisterMenu from "./menus/RegisterMenu.jsx";
 import LeaderboardMenu from "./menus/LeaderboardMenu.jsx";
 import { useEffect, useState } from "react";
-
-import { apiGet } from "./api/Client";
+import { apiGet } from "./menus/Client.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

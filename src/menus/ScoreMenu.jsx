@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getGlobalCurrentBeatmap } from "../hooks/useBeatmapLogic";
-import { apiPost } from "../api/Client";
 
 const ScoreMenu = () => {
   const navigate = useNavigate();
