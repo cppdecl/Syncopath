@@ -1,5 +1,5 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
 const beatmapsDir = path.join(__dirname, "../../", "public", "beatmaps");
 const files = fs.readdirSync(beatmapsDir).filter((f) => f.endsWith(".osz"));

@@ -601,7 +601,7 @@ const GameMenu = () => {
       sessionStorage.setItem("lastGameScore", JSON.stringify(finalScoreData));
 
       // Add score to global leaderboard immediately after game ends
-      const playerName = "samam123king"; // For simplicity, using a static name
+      const playerName = "SamplePlayerName"; //
       const scoreEntry = {
         player: playerName,
         score: score, // Use current score
