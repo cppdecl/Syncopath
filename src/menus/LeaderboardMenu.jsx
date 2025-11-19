@@ -1,6 +1,6 @@
 // src/menus/LeaderboardMenu.jsx
 import { useEffect, useState } from "react";
-import { apiGet } from "../api/Client";
+import { apiGet } from "./Client.jsx";
 import { Link, useLocation } from "react-router-dom";
 
 export default function LeaderboardMenu() {
