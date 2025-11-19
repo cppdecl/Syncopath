@@ -1,4 +1,4 @@
-// hooks/useBeatmapLogic.js
+// src/hooks/useBeatmapLogic.js
 import { useState, useEffect, useCallback } from "react";
 import {
   parseOszFile,

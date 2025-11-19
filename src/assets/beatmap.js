@@ -1,4 +1,4 @@
-// assets/beatmap.js
+// src/assets/beatmap.js
 import JSZip from "jszip";
 
 // Function to convert a base64 string to a Blob URL (renamed from createAudioBlobUrl)
@@ -94,6 +94,8 @@ const parseOsuFile = (content) => {
           if (key === "Artist") metadata.artist = value;
           if (key === "Creator") metadata.mapper = value;
           if (key === "Version") metadata.difficulty = value;
+          if (key === "BeatmapID") metadata.beatmapId = parseInt(value);
+          if (key === "BeatmapSetID") metadata.beatmapSetId = parseInt(value);
         }
         break;
 
@@ -154,6 +156,16 @@ const parseOsuFile = (content) => {
         break;
     }
   }
+
+  console.log(
+    "Processed Beatmap '" +
+      metadata.title +
+      "' (DifficultyID " +
+      metadata.beatmapId +
+      " | BeatmapSetID " +
+      metadata.beatmapSetId +
+      ")"
+  );
 
   // Calculate BPM from timing points
   const firstTimingPoint = timingPoints.find((tp) => tp.uninherited);

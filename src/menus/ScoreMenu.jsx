@@ -1,7 +1,8 @@
-// src/components/ScoreMenu.jsx
+// src/menus/ScoreMenu.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getGlobalCurrentBeatmap } from "../hooks/useBeatmapLogic";
+import { apiPost } from "../api/Client";
 
 const ScoreMenu = () => {
   const navigate = useNavigate();
@@ -13,6 +14,13 @@ const ScoreMenu = () => {
     // Retrieve score data from session storage
     const storedScore = sessionStorage.getItem("lastGameScore");
     const currentBeatmap = getGlobalCurrentBeatmap();
+
+    // inside effect:
+    apiPost("/scores/submit", {
+      beatmapId: scoreInfo.beatmapId,
+      score: scoreInfo.score,
+      accuracy: scoreInfo.accuracy,
+    });
 
     if (storedScore) {
       try {
